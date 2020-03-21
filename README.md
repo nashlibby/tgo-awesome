@@ -1,5 +1,5 @@
 # tgo-awesome
-golang各种包的姿势
+golang各种包的打开姿势
 
 #### Contents
 
