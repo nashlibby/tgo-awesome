@@ -32,6 +32,7 @@ type User struct {
 	Age  int    `db:"age"`
 }
 
+// 构造
 func NewMysql() *Mysql{
 	db, err := MysqlConnect()
 	if err != nil {
@@ -40,6 +41,7 @@ func NewMysql() *Mysql{
 	return &Mysql{DB: db}
 }
 
+// mysql连接
 func MysqlConnect() (db *sql.DB, err error) {
 	// 第⼀步：打开数据库,格式是 ⽤户名：密码@/数据库名称？编码⽅式
 	dbDSN := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s", UserName, PassWord, Host, Port, DataBase, Charset)
