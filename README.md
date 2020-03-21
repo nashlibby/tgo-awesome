@@ -5,4 +5,4 @@ golang各种包的打开姿势
 
 - [Mysql](https://github.com/nashlibby/tgo-awesome/tree/master/mysql) `github.com/go-sql-driver/mysql`
 
-- [Redis](https://github.com/nashlibby/tgo-awesome/tree/master/redis)
+- [Redis](https://github.com/nashlibby/tgo-awesome/tree/master/redis) `https://github.com/go-redis/redis`
