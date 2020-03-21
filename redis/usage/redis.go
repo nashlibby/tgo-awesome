@@ -214,3 +214,89 @@ func (r *Redis) SIsMember(key string, member interface{}) {
 	result, err := r.Client.SIsMember(key, member).Result()
 	fmt.Println("SIsMember", result, err)
 }
+
+/**
+ ** zset
+ */
+
+// 添加元素
+func (r *Redis) ZAdd(key string,  members ...*redis.Z) {
+	result, err := r.Client.ZAdd(key, members...).Result()
+	fmt.Println("ZAdd", result, err)
+}
+
+// 获取zset 按分数正序排序
+func (r *Redis) ZRange(key string, start, stop int64) {
+	result, err := r.Client.ZRange(key, start, stop).Result()
+	fmt.Println("ZRange", result, err)
+}
+
+// 获取zset 按分数倒序排序
+func (r *Redis) ZRevRange(key string, start, stop int64) {
+	result, err := r.Client.ZRevRange(key, start, stop).Result()
+	fmt.Println("ZRevRange", result, err)
+}
+
+// 获取zset元素数量
+func (r *Redis) ZCard(key string) {
+	result, err := r.Client.ZCard(key).Result()
+	fmt.Println("ZCard", result, err)
+}
+
+/**
+ ** Hash
+ */
+
+// 添加值
+func (r *Redis) HSet(key string, values ...interface{}) {
+	result, err := r.Client.HSet(key, values...).Result()
+	fmt.Println("HSet", result, err)
+}
+
+// 根据field获取值
+func (r *Redis) HGet(key, field string) {
+	result, err := r.Client.HGet(key, field).Result()
+	fmt.Println("HGet", result, err)
+}
+
+// 获取所有field和value
+func (r *Redis) HGetAll(key string) {
+	result, err := r.Client.HGetAll(key).Result()
+	fmt.Println("HGetAll", result, err)
+}
+
+// 返回元素个数
+func (r *Redis) HLen(key string) {
+	result, err := r.Client.HLen(key).Result()
+	fmt.Println("HLen", result, err)
+}
+
+// 返回所有field
+func (r *Redis) HKeys(key string) {
+	result, err := r.Client.HKeys(key).Result()
+	fmt.Println("HKeys", result, err)
+}
+
+// 返回所有values
+func (r *Redis) HVals(key string) {
+	result, err := r.Client.HVals(key).Result()
+	fmt.Println("HVals", result, err)
+}
+
+// 删除field
+func (r *Redis) HDel(key, field string) {
+	result, err := r.Client.HDel(key, field).Result()
+	fmt.Println("HDel", result, err)
+}
+
+// field是否存在
+func (r *Redis) HExists(key, field string) {
+	result, err := r.Client.HExists(key, field).Result()
+	fmt.Println("HExists", result, err)
+}
+
+// 整数自增
+func (r *Redis) HIncrBy(key, field string, incr int64) {
+	result, err := r.Client.HIncrBy(key, field, incr).Result()
+	fmt.Println("HIncrBy", result, err)
+}
