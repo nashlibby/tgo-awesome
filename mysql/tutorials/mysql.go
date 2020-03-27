@@ -3,7 +3,7 @@
  * Author: nash.tang <112614251@qq.com>
  */
 
-package usage
+package tutorials
 
 import (
 	"database/sql"
@@ -12,17 +12,22 @@ import (
 	"time"
 )
 
-const (
-	UserName = "root"
-	PassWord = "root"
-	Host     = "127.0.0.1"
-	Port     = "3306"
-	DataBase = "demo"
-	Charset  = "utf8"
-)
-
 type Mysql struct {
-	DB *sql.DB
+	Config *MysqlConfig
+	DB     *sql.DB
+}
+
+// 配置信息
+type MysqlConfig struct {
+	UserName        string
+	Password        string
+	Host            string
+	Port            int
+	DataBase        string
+	CharSet         string
+	MaxOpenConnects int
+	MaxIdleConnects int
+	MaxLifeTime     time.Duration
 }
 
 // 用户表结构体
@@ -33,37 +38,29 @@ type User struct {
 }
 
 // 构造
-func NewMysql() *Mysql{
-	db, err := MysqlConnect()
+func NewMysql(config *MysqlConfig) *Mysql {
+	// 第⼀步：打开数据库,格式是 ⽤户名：密码@/数据库名称？编码⽅式
+	dbDSN := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=%s", config.UserName, config.Password, config.Host,
+		config.Port, config.DataBase, config.CharSet)
+	db, err := sql.Open("mysql", dbDSN)
 	if err != nil {
 		panic(err.Error())
-	}
-	return &Mysql{DB: db}
-}
-
-// mysql连接
-func MysqlConnect() (db *sql.DB, err error) {
-	// 第⼀步：打开数据库,格式是 ⽤户名：密码@/数据库名称？编码⽅式
-	dbDSN := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s", UserName, PassWord, Host, Port, DataBase, Charset)
-	db, err = sql.Open("mysql", dbDSN)
-	if err != nil {
-		return
 	} else {
 		fmt.Println("mysql is connected")
 	}
 
 	// 最大连接数 实现连接池
-	db.SetMaxOpenConns(100)
+	db.SetMaxOpenConns(config.MaxOpenConnects)
 	// 闲置连接数
-	db.SetMaxIdleConns(20)
+	db.SetMaxIdleConns(config.MaxIdleConnects)
 	// 最大连接周期
-	db.SetConnMaxLifetime(100 * time.Second)
+	db.SetConnMaxLifetime(config.MaxLifeTime)
 
 	if err = db.Ping(); err != nil {
-		return
+		panic(err.Error())
 	}
 
-	return
+	return &Mysql{DB: db}
 }
 
 // 关闭连接
@@ -198,7 +195,7 @@ func (m *Mysql) Tx() {
 
 	if insertRowsAffected > 0 && updateRowsAffected > 0 {
 		tx.Commit()
-	}else{
+	} else {
 		tx.Rollback()
 	}
 }

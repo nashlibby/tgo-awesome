@@ -3,7 +3,7 @@
  * Author: nash.tang <112614251@qq.com>
  */
 
-package usage
+package tutorials
 
 import (
 	"fmt"
@@ -11,22 +11,25 @@ import (
 	"time"
 )
 
-const (
-	Addr     = "localhost:6379"
-	Password = ""
-	DB       = 0
-)
-
 type Redis struct {
+	Config *RedisConfig
 	Client *redis.Client
 }
 
+// 配置信息
+type RedisConfig struct {
+	Address  string
+	Port     int
+	Password string
+	DB       int
+}
+
 // 构造
-func NewRedis() *Redis{
+func NewRedis(config *RedisConfig) *Redis {
 	client := redis.NewClient(&redis.Options{
-		Addr:     Addr,
-		Password: Password,
-		DB:       DB,
+		Addr:     fmt.Sprintf("%s:%d", config.Address, config.Port),
+		Password: config.Password,
+		DB:       config.DB,
 	})
 
 	_, err := client.Ping().Result()
@@ -220,7 +223,7 @@ func (r *Redis) SIsMember(key string, member interface{}) {
  */
 
 // 添加元素
-func (r *Redis) ZAdd(key string,  members ...*redis.Z) {
+func (r *Redis) ZAdd(key string, members ...*redis.Z) {
 	result, err := r.Client.ZAdd(key, members...).Result()
 	fmt.Println("ZAdd", result, err)
 }

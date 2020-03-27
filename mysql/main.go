@@ -6,11 +6,23 @@
 package main
 
 import (
-	"mysql/usage"
+	"mysql/tutorials"
+	"time"
 )
 
 func main() {
-	mysql := usage.NewMysql()
+	config := &tutorials.MysqlConfig{
+		UserName:        "root",
+		Password:        "root",
+		Host:            "localhost",
+		Port:            3306,
+		DataBase:        "demo",
+		CharSet:         "utf8",
+		MaxOpenConnects: 100,
+		MaxIdleConnects: 20,
+		MaxLifeTime:     100 * time.Second,
+	}
+	mysql := tutorials.NewMysql(config)
 	defer mysql.Close()
 
 	// 查询单条记录
