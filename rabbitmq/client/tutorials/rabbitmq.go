@@ -46,10 +46,27 @@ func (r *RabbitMq) Close() {
 	r.conn.Close()
 }
 
-// 队列
-func (r *RabbitMq) Queue(name string, durable, autoDelete, exclusive, noWait bool) *amqp.Queue{
+// 交换机定义
+func (r *RabbitMq) ExchangeDeclare(exchangeName, exchangeType string, durable, autoDelete, internal, noWait bool) {
+	err := r.ch.ExchangeDeclare(
+		exchangeName,   // name
+		exchangeType, // type
+		durable,     // durable
+		autoDelete,    // auto-deleted
+		internal,    // internal
+		noWait,    // no-wait
+		nil,      // arguments
+	)
+
+	if err != nil {
+		panic(err.Error())
+	}
+}
+
+// 队列定义
+func (r *RabbitMq) QueueDeclare(queueName string, durable, autoDelete, exclusive, noWait bool) *amqp.Queue{
 	queue, err := r.ch.QueueDeclare(
-		name,
+		queueName,
 		durable,
 		autoDelete,
 		exclusive,
@@ -63,10 +80,10 @@ func (r *RabbitMq) Queue(name string, durable, autoDelete, exclusive, noWait boo
 	return &queue
 }
 
-// 发布
-func (r *RabbitMq) Publish(body []byte, exchange, routingKey string, mandatory, immediate bool) error {
+// 投递消息
+func (r *RabbitMq) Publish(body []byte, exchangeName, routingKey string, mandatory, immediate bool) error {
 	err := r.ch.Publish(
-		exchange,
+		exchangeName,
 		routingKey,
 		mandatory,
 		immediate,
